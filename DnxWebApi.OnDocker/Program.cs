@@ -12,31 +12,25 @@ namespace DnxWebApi.OnDocker
 {
     public class Program
     {
+        //public static void Main(string[] args)
+        //{
+        //    var host = new WebHostBuilder()
+        //        .UseKestrel()
+        //        .UseContentRoot(Directory.GetCurrentDirectory())
+        //        .UseIISIntegration()
+        //        .UseStartup<Startup>()
+        //        .UseUrls("http://localhost:5000/")
+        //        .Build();
+
+        //    host.Run();
+        //}
+
         public static void Main(string[] args)
         {
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
+            WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseUrls("http://localhost:8081/")
-                .Build();
-
-            host.Run();
+                .Build()
+                .Run();
         }
     }
-
-
-    //public class Program
-    //{
-    //    public static void Main(string[] args)
-    //    {
-    //        BuildWebHost(args).Run();
-    //    }
-
-    //    public static IWebHost BuildWebHost(string[] args) =>
-    //        WebHost.CreateDefaultBuilder(args)
-    //            .UseStartup<Startup>()
-    //            .Build();
-    //}
 }

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DnxWebApi.OnDocker.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("")]
     public class ValuesController : Controller
     {
         // GET api/values
