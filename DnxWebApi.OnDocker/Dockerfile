@@ -14,5 +14,6 @@ FROM microsoft/dotnet:2.2.2-aspnetcore-runtime-alpine AS build-env
 WORKDIR /app
 COPY --from=builder /app/out .
 
+# Entrypoint runs this by default, but also allows additional exec commands whereas CMD seems more limited
 ENTRYPOINT ["dotnet", "DnxWebApi.OnDocker.dll"]
 #CMD ["dotnet", "DnxWebApi.OnDocker.dll"]
