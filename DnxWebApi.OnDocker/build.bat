@@ -1,1 +1,5 @@
-docker build -t ricrob1/dnx:latest .
+echo off
+
+echo on
+
+docker build -t dnxweb .
