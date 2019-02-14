@@ -1,0 +1,14 @@
+version: '3'
+services: 
+  frontend:
+    build: 
+      dockerfile: 'Dockerfile'
+      context: ./NginX.Front
+    ports:
+      - '3050:80'
+  backend:
+    build: 
+      dockerfile: 'Dockerfile'
+      context: ./DnxWebApi.OnDocker
+    ports:
+      - '5000:80'
