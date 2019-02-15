@@ -25,6 +25,7 @@ namespace DnxWebApi.OnDocker
         //    host.Run();
         //}
 
+
         public static void Main(string[] args)
         {
             WebHost.CreateDefaultBuilder(args)

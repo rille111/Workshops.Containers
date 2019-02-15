@@ -1,14 +1,14 @@
 version: '3'
 services: 
-  frontend:
+  frontend-lb:
     build: 
       dockerfile: 'Dockerfile'
-      context: ./NginX.Front
+      context: ./frontend.loadbalancer.nginx
     ports:
-      - '3050:80'
-  backend:
+      - '8080:80'
+  backend-api:
     build: 
       dockerfile: 'Dockerfile'
-      context: ./DnxWebApi.OnDocker
+      context: ./backend.values.api
     ports:
       - '5000:80'
