@@ -7,10 +7,10 @@ metadata:
 spec:
   containers:
   - name: web
-    image: ricrob1/
+    image: ricrob1/lab-webclient:latest
     resources:
       limits:
         memory: "128Mi"
         cpu: "500m"
     ports:
-      - containerPort: <Port>
+      - containerPort: 3000

@@ -1,1 +1,12 @@
 apiVersion: v1
+kind: Service
+metadata:
+  name: client-node-port
+spec:
+  type: NodePort
+  selector:
+    component: web
+  ports:
+  - port: 3050 # OTHER pods use this port to communicate with THIS pod
+    targetPort: 80 # Port for the Container inside the Pod
+    nodePort: 32001 # Port that the outside world (my machine) uses to access this pod

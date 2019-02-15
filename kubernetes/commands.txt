@@ -1,0 +1,6 @@
+minikube ip (get the ip where you browse to!)
+minikube start --vm-driver hyperv (what VM driver to use) --hyperv-virtual-switch "minikube_network_switch" (what hyperv switch to use)
+kubectl apply -f client-pod.yaml (what file whose config to apply)
+kubectl apply -f client-node-port.yaml (what file whose config to apply)
+kubectl get pods
+kubectl get services
