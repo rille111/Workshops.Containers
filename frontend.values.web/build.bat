@@ -1,1 +1,1 @@
-docker build -t frontweb .
+docker build -t ricrob1/lab-webclient:latest .

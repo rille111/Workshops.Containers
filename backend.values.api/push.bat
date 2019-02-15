@@ -1,0 +1,1 @@
+docker push ricrob1/lab-webapi:latest

@@ -1,1 +1,1 @@
-docker build -t frontendlbdev .
+docker build -t ricrob1/lab-loadbalancer:latest .
