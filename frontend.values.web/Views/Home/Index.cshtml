@@ -1,0 +1,11 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Whoa! This is a web app with ASP.NET Core.</p>
+    <p>The APIURL is: <span class="@ViewData["sev"]">@ViewData["apiurl"]</span></p>
+    <br />
+    <p>Response from API: <span class="@ViewData["response_sev"]">@ViewData["response_msg"]</span></p>
+</div>
