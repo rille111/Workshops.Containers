@@ -12,3 +12,11 @@ services:
       context: ./backend.values.api
     ports:
       - '5000:80'
+  frontend-web:
+    build: 
+      dockerfile: 'Dockerfile'
+      context: ./frontend.values.web
+    environment: 
+      - APIURL=http://backend-api:80/
+    ports:
+      - '3000:80'
