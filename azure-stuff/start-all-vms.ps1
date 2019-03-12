@@ -1,0 +1,1 @@
+az vm start --ids $(az vm list --query "[?starts_with(name, 'aks')].id" -o tsv)

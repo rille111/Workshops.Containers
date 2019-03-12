@@ -1,0 +1,1 @@
+az vm deallocate --ids $(az vm list --query "[?starts_with(name, 'aks')].id" -o tsv)
