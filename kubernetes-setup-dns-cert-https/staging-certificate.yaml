@@ -2,11 +2,11 @@
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
-  name: kube-fodmaps-nu
+  name: kube-fodmaps-nu-staging-cert
 spec:
   secretName: kube-fodmaps-nu-tls-staging
   issuerRef:
-    name: letsencrypt-prod
+    name: letsencrypt-staging
     kind: ClusterIssuer
   commonName: kube.fodmaps.nu
   dnsNames:
