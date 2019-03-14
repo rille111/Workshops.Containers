@@ -72,18 +72,17 @@ After a while, run these commands:
     * `kubectl describe certificate -n cert-manager-test`
     * Make sure stuff works, then cleanup with:
     * `kubectl delete -f test-resources.yaml`
-
-After that, you can either follow the staging instructions here: 
+* After that, you can either follow the staging instructions here: 
     * https://github.com/jetstack/cert-manager/blob/master/docs/tutorials/acme/quick-start/index.rst 
     * and follow the instructions there to get a LetsEncrypt certificate, it's better than me writing the same guide here. 
     * Again, first use the staging stuff first (use prepared yamls here)!
     * We're going to use ingress-shim (use 'annotations' in `staging/production-ingress-service.yaml` instead of creating our own with `certificate.yaml` even though the yaml is there as an option.)
-Or, if you're lazy or trust stuff works automagically, ignore that guide, edit and execute these yamls:
+* Or, if you're lazy or trust stuff works automagically, ignore that guide, edit and execute these yamls:
     * edit yaml first to use your settings, then `kubectl apply -f staging-issuer.yaml` 
     * edit first, then `kubectl apply -f staging-ingress-service.yaml` (overwrites your previously deployed ingress)
     * Run `kubectl describe certificates` and it should say that certificate is valid, or that it's up to date, otherwise wait, or go to Troubleshooting below
     * Go to https://kube.fodmaps.nu (replace with your host) and verify that it works, WITH HTTPS warnings (that's ok)
-Now, use the production variant (validation may take time, with some retries!)
+* Now, use the production variant (validation may take time, with some retries!)
     * edit yaml first to use your settings, then `kubectl apply -f production-issuer.yaml` 
     * then `kubectl delete ingress ingress-service` 
     * edit first, then `kubectl apply -f production-ingress-service.yaml` (overwrites your previously deployed ingress)
