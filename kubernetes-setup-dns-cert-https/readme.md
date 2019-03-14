@@ -8,12 +8,19 @@ A brief walkthrough of the steps required follows below, from registering a doma
 ## Create a DNZ Zone in your Cloud Provider
 This will depend on the k8s/cloud provider. We need this setup first so that we have nameservers that can respond to requests.
 
-* I created a DNS zone called 'kube.fodmaps.nu' (I had problems for a while so I also created a DNS zone 'fodmaps.nu', but I will omit this step here because I don't think it's necessary)
+* I created a DNS zone called 'kube.fodmaps.nu' (
 * Add a * wildcard A record, point to the IP of the Ingress, it can be found be executing `kubectl get services`, use at the External IP of the Ingress controller, TTL an hour
     * Like so:  * A 10.10.10.10
 * Add a @ wildcard A record, point to the same adress, TTL an hour
     * Like so:  @ A 10.10.10.10
 * Note the name servers that is listed in this DNS Zone, there should be a list of 4-5, example: `ns1-08.azure-dns.com.`
+
+#### Problems getting a production cert?
+I had problems getting a production cert for a while so I also created a DNS zone 'fodmaps.nu', but I don't think it's necessary, but what I did was this:
+* Add a * wildcard A record, point to the IP of the Ingress, TTL an hour
+    * Like so:  * A 10.10.10.10
+* Add a @ wildcard A record, point to the same adress, TTL an hour
+    * Like so:  @ A 10.10.10.10
 
 ## Register and set up a domain
 Use your preferred domain registrar to register a domain, i'm using `fodmaps.nu`
@@ -41,6 +48,7 @@ Follow these steps:
     * TTL: `3600` (an hour)
 
 #### Verify domain
+
 After a while, run these commands:
 * `nslookup -q=NS kube.fodmaps.nu` (Replace with your FQDN)
     * The response should list all the name servers from your cloud provided DNS Zone, only then can you continue!
@@ -50,11 +58,13 @@ After a while, run these commands:
 * Go to http://kube.fodmaps.nu (replace with your registered subdomain) and see that you can access the website, only then can you continue!
 
 ## Install and set up Cert-manager for kubernetes
+
 * We're gonna use https://github.com/jetstack/cert-manager
 * Go to https://docs.cert-manager.io/en/latest/getting-started/install.html#installing-with-helm and install it
 * Verify by running `kubectl get pods --namespace cert-manager`
 
 #### Get LetsEncrypt SSL Cert and make HTTPS work
+
 * First Test out certmgr with 
     * `kubectl apply -f .\test-resources.yaml`
     * `kubectl describe certificate -n cert-manager-test`
@@ -79,6 +89,7 @@ Now, use the production variant (validation may take time, with some retries!)
 * Profit!
 
 ## Troubleshooting
+
 * Get the IP to your cluster, your ingress-controller by running: `kubectl get services` and look for External IP
     * Run `ping kube.fodmaps.nu` (replace) to see that you get response with the IP that is exactly the IP shown up in your ingress-controller
 * Run `ipconfig /flushdns` 
