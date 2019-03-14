@@ -1,3 +1,5 @@
+# Get a domain and Setup HTTPS with a certificate (LetsEncrypt)
+
 We're going to set up a TLS certificate provided by LetsEncrypt, issued to a chose sub domain.
 A brief walkthrough of the steps required follows below, from registering a domain, editing the DNS settings and making Cert-manager do the LetsEncrypt magic automatically, using ACME.
 
