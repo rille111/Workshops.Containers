@@ -1,8 +1,12 @@
 # Install Prometheus
 
 It's a monitoring framework for all kubernetes components.
-The project and install guide is here:
+The project and install guide is here: https://github.com/coreos/prometheus-operator/tree/master/contrib/kube-prometheus
 
+Guide 1: applying yamls from git repo:
+Guide 2: helm chart (untested): https://akomljen.com/get-kubernetes-cluster-metrics-with-prometheus-in-5-minutes/
+
+I haven't tested the helm chart but it is probably more desirable than the first!
 
 ## Quick install (some fixes from the guide included)
 
