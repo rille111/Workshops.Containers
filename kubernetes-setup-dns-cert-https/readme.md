@@ -9,6 +9,7 @@ A brief walkthrough of the steps required follows below, from registering a doma
 
 ## Create a DNZ Zone in your Cloud Provider
 This will depend on the k8s/cloud provider. We need this setup first so that we have nameservers that can respond to requests.
+So, a domain name is required for setting up Ingress endpoints to services running in the cluster. The specified domain name can be a top-level domain (TLD) or a subdomain. In either case you have to manually set up the NS records for the specified TLD or subdomain so as to delegate DNS resolution queries to an the cloud provider DNS zone created.
 
 * I created a DNS zone called 'kube.fodmaps.nu' (
 * Add a * wildcard A record, point to the IP of the Ingress, it can be found be executing `kubectl get services`, use at the External IP of the Ingress controller, TTL an hour
