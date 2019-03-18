@@ -1,0 +1,18 @@
+UNFINISHED!!!!
+apiVersion: v1
+kind: Pod
+metadata:
+  name: elasticsearch
+  namespace: logging
+  labels:
+    component: es
+spec:
+  containers:
+  - name: web
+    image: elasticsearch/elasticsearch:6.6.2
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: 3000

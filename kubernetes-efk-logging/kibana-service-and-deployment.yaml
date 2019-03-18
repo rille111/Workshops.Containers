@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana
+  namespace: logging
+  labels:
+    app: kibana
+spec:
+  ports:
+  - port: 5601
+  selector:
+    app: kibana
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  namespace: logging
+  labels:
+    app: kibana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kibana
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+      - name: kibana
+        image: docker.elastic.co/kibana/kibana-oss:6.6.2
+        resources:
+          limits:
+            cpu: 1000m #1.0 vCPU burst (100% of node?)
+          requests:
+            cpu: 100m #0.1 vCPU guaranteed
+        env:
+          - name: ELASTICSEARCH_URL
+            value: http://elasticsearch:9200 #corresponds to its Service name elasticsearch, will resolve to a list of X ip's for the pods
+        ports:
+        - containerPort: 5601
