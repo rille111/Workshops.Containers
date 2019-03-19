@@ -4,3 +4,4 @@ kubectl apply -f client-pod.yaml (what file whose config to apply)
 kubectl apply -f client-node-port.yaml (what file whose config to apply)
 kubectl get pods
 kubectl get services
+kubectl describe pod web-pod
