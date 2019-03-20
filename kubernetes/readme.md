@@ -1,6 +1,6 @@
 # Installation
 
-Kubernetes locally (Minikube) and on a Cloud provider (AKS, GKE, EKS)
+This part describes installation for Kubernetes locally (Minikube) and on a Cloud provider (AKS, GKE, EKS)
 
 ## Requirements
 
@@ -10,35 +10,40 @@ Kubernetes locally (Minikube) and on a Cloud provider (AKS, GKE, EKS)
 * Hyper-V installed
 * Choco (go to chocolatey.org and download it)
 
-## Install Kubernetes locally on Windows 10
+## Install Kubernetes (Minikube) locally on Windows 10
 
 * First, Create a network switch in hyper-v. (Ref: https://medium.com/@JockDaRock/minikube-on-windows-10-with-hyper-v-6ef0f4dc158c)
     * name it `minikube_network_switch`
-* Then follow below steps  (Ref: https://kubernetes.io/docs/tasks/tools/install-minikube/#windows)
-    * CD to the C:\ drive
-    * run `choco install minikube kubernetes-cli`
-    * IMPORTANT!! restart shell/commandprompt - not only refreshenv!!!
-    * CD to the C:\ drive
-    * run `minikube start --vm-driver hyperv --hyperv-virtual-switch "minikube_network_switch"`
-    * it should work, otherwise fix all problems. 
+* Then we're gonna follow these steps: (Ref: https://kubernetes.io/docs/tasks/tools/install-minikube/#windows)
+* CD to the C:\ drive **IMPORTANT** It might have to to with where your Users-folder is located
+* run `choco install minikube kubernetes-cli` (upgrade if you already have it)
+* IMPORTANT!! restart shell/commandprompt - not only refreshenv!!!
+* CD to the C:\ drive
+* run `minikube start --vm-driver hyperv --hyperv-virtual-switch "minikube_network_switch"` Going to take some minutes, dont cancel the process!
+* It should work, otherwise fix all problems.
 * Then, fix a bug (mentioned in  https://medium.com/@JockDaRock/minikube-on-windows-10-with-hyper-v-6ef0f4dc158c)
-    * Stop minikube image in hyper-v
+    * **Turn off** minikube image in hyper-v
     * Right click - Settings - Memory
     * Turn off dynamic and give it a solid 2gb or something
     * Restart it
+* Run `minikube status` to see that it works
+* Other fun commands:
+    * `minikube ip`
+    * `minikube dashboard`
 
-Problems?
+## Problems?
 * If minikube can't find the iso, try:
+    * You probably didnt do this from C: where your User-folder exists by default
     * Specify the path for the .minikube directory by setting the MINIKUBE_HOME env variable
-        * Like so: $env:MINIKUBE_HOME = "D:/" for powershell (see https://github.com/kubernetes/minikube/issues/1310)
-        * Or windows and reboot
-    * use cmd not powershell and go to c:, then run it again
-* Still doesn't work? Reinstall:
-    * Uninstall with `choco uninstall minikube`
-    * Open Hyper-V and delete the minikube image
+        * Example powershell `$env:MINIKUBE_HOME = "D:/"` (see https://github.com/kubernetes/minikube/issues/1310)
+        * Or do it in windows and reboot
+    * Use cmd not powershell and go to c:, then run it again
+* Still doesn't work? Delete all:
+    * Try `minikube delete`
     * Delete everything from:
         * %User%\.kube
         * %User%\.minikube
+    * Open Hyper-V and delete the minikube image
     * Go through the above installation steps again
     * Or read and do this: https://github.com/kubernetes/minikube/issues/822
 
@@ -49,27 +54,27 @@ More info:
 
 # Startup
 
-## Startup - Kubernetes (minikube, locally)
-
-* go to /kubernetes folder and run `apply-all.bat`
+## a) Kubernetes (minikube, locally)
+Apply the headless service (cluster-ip), and then the deployment with 1 pod containing the web client
+* run `kubectl apply -f client-cluster-ip-service.yaml`
+* run `kubectl apply -f client-deployment.yaml`
 * run `kubectl get pods` and verify there is one there
-* run `kubectl get services` and verify there is one port there
-* run `minikube ip` to find out the ip
-* go to `http://YOURIP:32001` the port is configured in client-node-port.yaml
-* run `minikube dashboard`
+* run `kubectl get services` and verify there is one clusterip there
+* run `.\expose-client-pod.ps1`
+* go to `http://127.0.0.1:8089` and verify that you can access the web site
 
-## Startup - Kubernetes (on a cloud provider, AKS, GKE, EKS)
+## b) Kubernetes (on a cloud provider, AKS, GKE, EKS)
 
 * Create cluster using the cloud providers portal
 * Configure the CLI tool from the cloud provider (azure cli, google cloud SDK etc)
 * Configure the kubectl to use this cluster and not your local Minikube
-* Go to /kubernetes folder and run `apply-all.bat`
-* Run `kubectl get pods` and verify there is one there
-* You won't be able to access your site because **NodePort** is only for local dev!!
+* Then, run the steps found in a)
 * NOTE!: To get going in the real cloud, see the next part of this set of tutorials!
 
-## Links and resources
+## Using private container repository
+See: https://kubernetes.io/docs/concepts/containers/images/#using-a-private-registry
 
+## Links and resources
 * Minikube https://github.com/kubernetes/minikube
 
 ## FAQ
