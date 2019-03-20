@@ -56,6 +56,7 @@ More info:
 * run `kubectl get services` and verify there is one port there
 * run `minikube ip` to find out the ip
 * go to `http://YOURIP:32001` the port is configured in client-node-port.yaml
+* run `minikube dashboard`
 
 ## Startup - Kubernetes (on a cloud provider, AKS, GKE, EKS)
 

@@ -37,12 +37,13 @@ We're gonna use the 1-pod version, so it might not suit all production needs!
 * Tune the __elasticsearch-*.yaml__'s to your liking
 * Run `kubectl create -f logging-namespace.yaml`
 * Run `kubectl create -f elasticsearch-service.yaml`
+* **Important!** If you're running Minikube, then edit elastic-statefulset.yaml and change the storageclass from default to standard! 
 * Run `kubectl create -f elasticsearch-statefulset.yaml`
 * Run this command until you get Status Bound: `kubectl get pvc -n logging` that's the persisted disk.
 * Run this command until you see the Pod up and running `kubectl get pods -n logging`
 * Optionally run this command to wait until everything is finished: `kubectl rollout status sts/es-cluster -n logging`
 * Run `kubectl port-forward es-cluster-0 9200:9200 -n logging`
-    * And verify that ES works by doing a webrequest with curl or Postman like `curl http://localhost:9200/_cluster/state?pretty` get some response
+    * Go to `http://localhost:9200/_cluster/state?pretty` and verify
 
 #### 2. Install Kibana (K of EFK)
 * Tune the __kibana-service-and-deployment.yaml__ to your liking
@@ -53,7 +54,7 @@ We're gonna use the 1-pod version, so it might not suit all production needs!
 #### 3. Install FluentBit (F of EFK)
 * run `helm install stable/fluent-bit --name=fluent-bit --namespace=logging --set backend.type=es --set backend.es.host=elasticsearch`
 * run `kubectl get pods -n logging` until you see X many running fluentbit pods where X is as many nodes as you got
-* Run `expose-kibana-pod.ps1`
+* Run `expose-kibana-pod.ps1` again
 * Browse to http://localhost:5601
     * Create an Index with: `kubernetes_*` and choose @timestamp
     * Wait, Click Discover, and see logs!

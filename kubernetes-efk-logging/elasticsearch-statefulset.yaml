@@ -71,7 +71,7 @@ spec:
         app: elasticsearch
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: default #do-block-storage  (see cloud provider for storage classes)
+      storageClassName: standard #Tune here! Try 'standard' for Minikube. Also: 'do-block-storage' is something.  (see cloud provider for storage classes)
       resources:
         requests:
           storage: 5Gi # Tune here! See cloud provider for more info
