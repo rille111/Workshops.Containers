@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+spec:
+  replicas: 1 # no of different pods this template is supposed to make (exacyly X pods)
+  selector:
+    matchLabels:
+      component: web
+  template: #the config that is going to be used by every pod
+    metadata: 
+      labels:
+        component: web
+    spec:
+      containers:
+        - name: web
+          image: ricrob1/lab-webclient:latest 
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"          
+          ports:
+            - containerPort: 3000
