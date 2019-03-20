@@ -9,8 +9,12 @@ If you're using GKE, you can (almost) automatically set this up, although with F
 
 If we wanna do everything manually, we will do https://www.digitalocean.com/community/tutorials/how-to-set-up-an-elasticsearch-fluentd-and-kibana-efk-logging-stack-on-kubernetes
 
+Lastly, we will configure the web client .NET app to use Serilog for structured logging.
+
 ## Requirements
-An entire EFK-stack eats lots of resources. So to be safe, you need at least 3 nodes or 6 vcpus if you're running in the cloud, and 4 if Minikube. For RAM? Dunno. Will monitor the resource usage in grafana before and after installation.
+An entire EFK-stack eats pretty much resources. So to be safe, you need at least 
+* Around 2-3ghz for the vCPU total (since you wanna run other stuff too!) depending on the 1 or 3-pod version.
+* For RAM? Dunno but consider 1-2gigs for the 1-pod version.
 
 ## Choices
 The docs state that we can either:
@@ -28,13 +32,13 @@ We shall focus on the node level logging agents. There are a couple of guides:
 
 I elected to compose yamls following the topmost guide for Elastic and Kibana, but for FluentBit I use stuff from the Prabhat guide (Helm) with some modifications.
 
-## Installation
+## EFK installation
 
 We can use an a) image or a b) Helm installation or c) composing our own yamls. The a) is the cheaper variant for testing, not really for production, and b) requires a lot more resources, where c) we got more control. So we go with c).
 
-#### 1. Install ElasticSearch Cluster (E of EFK)
+### 1. Install ElasticSearch Cluster (E of EFK)
 
-We're gonna use the 1-pod version, so it might not suit all production needs!
+We're gonna use the 1-pod version, so it might not suit all production needs! Refer to the guide for the 3-pod version.
 * Tune the __elasticsearch-*.yaml__'s to your liking
 * Run `kubectl apply -f logging-namespace.yaml`
 * Run `kubectl apply -f elasticsearch-service.yaml`
@@ -44,8 +48,7 @@ We're gonna use the 1-pod version, so it might not suit all production needs!
 * Run `kubectl port-forward es-cluster-0 9200:9200 -n logging`
     * Go to `http://localhost:9200/_cluster/state?pretty` and verify
 
-##### Errors?
-
+** Errors? **
 * Fix the yamls
     * Perhaps the volume storageclass was wrong. Switch from standard to default, or something else
     * In the yaml CTRL-F for "Tune" and edit
@@ -70,5 +73,18 @@ We're gonna use the 1-pod version, so it might not suit all production needs!
 
 #### Notes
 Using the 1-pod version it seems like CPU only went up from 7 to 11% across 3 nodes (Azure Standard DSv2), and memory from 17 to 20 %. That's a good deal!
-
 Next time, I'll use the aforementioned guide: https://prabhatsharma.in/blog/logging-in-kubernetes-using-elasticsearch-the-easy-way/ and use Helm with parameters to specialize the installation.
+
+## .NET AspnetCore installation
+We're gonna use Serilog. We'll need these nuget packages (I use the preview packages!)
+* Serilog.AspNetCore (For asp.net core)
+* Serilog.Sinks.Console (Fluentbit catches the console output)
+* Serilog.Formatting.Elasticsearch (So that elasticsearch can understand the output in a structured way)
+* Serilog.Settings.Configuration (To read appsettings.json)
+
+Pro tip: For non-AspNet .NET Core, but still .NET Core, use Serilog.Extensions.Logging.
+
+# References & Links
+* https://andrewlock.net/writing-logs-to-elasticsearch-with-fluentd-using-serilog-in-asp-net-core/
+* https://github.com/serilog/serilog-sinks-elasticsearch
+* https://github.com/serilog/serilog-sinks-console
