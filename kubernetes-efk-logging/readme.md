@@ -33,22 +33,31 @@ I elected to compose yamls following the topmost guide for Elastic and Kibana, b
 We can use an a) image or a b) Helm installation or c) composing our own yamls. The a) is the cheaper variant for testing, not really for production, and b) requires a lot more resources, where c) we got more control. So we go with c).
 
 #### 1. Install ElasticSearch Cluster (E of EFK)
+
 We're gonna use the 1-pod version, so it might not suit all production needs!
 * Tune the __elasticsearch-*.yaml__'s to your liking
-* Run `kubectl create -f logging-namespace.yaml`
-* Run `kubectl create -f elasticsearch-service.yaml`
-* **Important!** If you're running Minikube, then edit elastic-statefulset.yaml and change the storageclass from default to standard! 
-* Run `kubectl create -f elasticsearch-statefulset.yaml`
-* Run this command until you get Status Bound: `kubectl get pvc -n logging` that's the persisted disk.
-* Run this command until you see the Pod up and running `kubectl get pods -n logging`
-* Optionally run this command to wait until everything is finished: `kubectl rollout status sts/es-cluster -n logging`
+* Run `kubectl apply -f logging-namespace.yaml`
+* Run `kubectl apply -f elasticsearch-service.yaml`
+* Run `kubectl apply -f elasticsearch-statefulset.yaml`
+* Run this command until you see a mount as **Bound** `kubectl get pvc -n logging`
+* Run this command until you see everything and running `kubectl get all -n logging`
 * Run `kubectl port-forward es-cluster-0 9200:9200 -n logging`
     * Go to `http://localhost:9200/_cluster/state?pretty` and verify
 
+##### Errors?
+
+* Fix the yamls
+    * Perhaps the volume storageclass was wrong. Switch from standard to default, or something else
+    * In the yaml CTRL-F for "Tune" and edit
+* Delete and try again
+    * `kubectl delete -f elasticsearch-service.yaml`
+    * `kubectl delete -f elasticsearch-statefulset.yaml`
+    * `kubectl delete pvc data-es-cluster-0 -n logging`
+
 #### 2. Install Kibana (K of EFK)
 * Tune the __kibana-service-and-deployment.yaml__ to your liking
-* Run `kubectl create -f .\kibana-service-and-deployment.yaml`
-* Run this command to wait until all finished `kubectl rollout status deployment/kibana -namespace logging`
+* Run `kubectl apply -f .\kibana-service-and-deployment.yaml`
+* Wait until all are running `kubectl get pods -n logging`
 * Run `expose-kibana-pod.ps1` and browse to http://localhost:5601, make sure it works and then exit
 
 #### 3. Install FluentBit (F of EFK)
