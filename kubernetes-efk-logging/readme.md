@@ -88,3 +88,5 @@ Pro tip: For non-AspNet .NET Core, but still .NET Core, use Serilog.Extensions.L
 * https://andrewlock.net/writing-logs-to-elasticsearch-with-fluentd-using-serilog-in-asp-net-core/
 * https://github.com/serilog/serilog-sinks-elasticsearch
 * https://github.com/serilog/serilog-sinks-console
+* https://www.humankode.com/asp-net-core/logging-with-elasticsearch-kibana-asp-net-core-and-docker
+* https://serilog.net/
