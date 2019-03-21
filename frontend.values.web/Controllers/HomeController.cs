@@ -26,6 +26,7 @@ namespace frontend.values.web.Controllers
                 : "alert-success";
 
             ViewData["apiurl"] = apiUrl ?? "Not Configured!";
+			ViewData["foo"] = "bar";
             ViewData["sev"] = sev;
 
             var apiResponse = GetValuesFromApi(apiUrl);
