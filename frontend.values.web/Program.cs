@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using Serilog;
+using Serilog.Exceptions;
+using Serilog.Formatting.Elasticsearch;
 
 namespace frontend.values.web
 {
@@ -13,14 +16,30 @@ namespace frontend.values.web
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .ConfigureLogging((ctx, l) =>
+                .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                    l.ClearProviders();
-                    l.AddConfiguration(ctx.Configuration.GetSection("Logging"));
-                    l.AddConsole();
-                    l.AddDebug();
+                    var env = hostingContext.HostingEnvironment;
+                    config.AddJsonFile($"appsettings.json", true, true); // First, AppSettings (general)
+                    config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true); // Then, AppSettings (specific environment)
+                    config.AddEnvironmentVariables(); // Then, Environment variables
+                    if (args != null)
+                        config.AddCommandLine(args); // Then, CommandLine arguments
                 })
-        ;
+                .UseSerilog((ctx, config) =>
+                {
+                    var shouldFormatElastic = ctx.Configuration.GetValue<bool>("LOG_ELASTICFORMAT", false);
+                    config
+                        .MinimumLevel.Information()
+                        .Enrich.FromLogContext() // TODO: See what difference this makes!
+                        .Enrich.WithExceptionDetails()
+                        ;
+
+                    if (shouldFormatElastic)
+                        config.WriteTo.Console(new ExceptionAsObjectJsonFormatter(renderMessage: true));
+                    else
+                        config.WriteTo.Console();
+
+                })
+                .UseStartup<Startup>();
     }
 }

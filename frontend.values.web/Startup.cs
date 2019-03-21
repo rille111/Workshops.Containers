@@ -1,18 +1,30 @@
-﻿using ElmahCore.Mvc;
+﻿using System.Collections.Generic;
+using ElmahCore.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace frontend.values.web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
             Configuration = configuration;
+            logger.LogInformation("Starting up application. Display all configured variables:");
+            var kvPairs = new List<KeyValuePair<string, string>>();
+
+            foreach (var section in configuration.GetChildren())
+            {
+                var pair = new KeyValuePair<string, string>(section.Key, section.Value);
+                kvPairs.Add(pair);
+            }
+
+            logger.LogInformation("{@Variables}", kvPairs);
         }
 
         public IConfiguration Configuration { get; }

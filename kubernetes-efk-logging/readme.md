@@ -76,17 +76,32 @@ Using the 1-pod version it seems like CPU only went up from 7 to 11% across 3 no
 Next time, I'll use the aforementioned guide: https://prabhatsharma.in/blog/logging-in-kubernetes-using-elasticsearch-the-easy-way/ and use Helm with parameters to specialize the installation.
 
 ## .NET AspnetCore installation
+
 We're gonna use Serilog. We'll need these nuget packages (I use the preview packages!)
+Look at frontend web client, it has all these nugets and necessary config, with examples.
+
 * Serilog.AspNetCore (For asp.net core)
 * Serilog.Sinks.Console (Fluentbit catches the console output)
 * Serilog.Formatting.Elasticsearch (So that elasticsearch can understand the output in a structured way)
 * Serilog.Settings.Configuration (To read appsettings.json)
+* Serilog.Exceptions (to enrich exceptions, not sure if needed today)
 
-Pro tip: For non-AspNet .NET Core, but still .NET Core, use Serilog.Extensions.Logging.
+The configuration files (containing app settings) or environment variables will decide wether an ElasticSearchJsonFormatter will be used or not:
+* appsettings.json (appsetting variables)
+* appsettings.Development.json (appsetting variables, only to be used when debugging)
+* launchSettings.json (contains environemnt variables when running from Kestrel)
+
+See the Serilog configuration using the previous app settings
+* Startup.cs
+* Program.cs
+
+Change the configuration to try the different outputs, run the app with `dotnet *.dll` and browse to http://localhost:5000/Home/ and make some trace output.
+
+Pro tip: For non-AspNet .NET Core, but still .NET Core, use Serilog.Extensions.Logging, to enable ILogger usage.
 
 # References & Links
 * https://andrewlock.net/writing-logs-to-elasticsearch-with-fluentd-using-serilog-in-asp-net-core/
-* https://github.com/serilog/serilog-sinks-elasticsearch
-* https://github.com/serilog/serilog-sinks-console
 * https://www.humankode.com/asp-net-core/logging-with-elasticsearch-kibana-asp-net-core-and-docker
 * https://serilog.net/
+* https://github.com/serilog/serilog-sinks-elasticsearch
+* https://github.com/serilog/serilog-sinks-console

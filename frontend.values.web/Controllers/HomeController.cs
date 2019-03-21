@@ -4,31 +4,37 @@ using Microsoft.AspNetCore.Mvc;
 using frontend.values.web.Models;
 using Flurl.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace frontend.values.web.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IConfiguration _config;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IConfiguration config)
         {
             _logger = logger;
+            _config = config;
         }
 
         [HttpGet]
         public IActionResult Index()
         {
-            //var apiUrl = "http://localhost:8080/"; //Environment.GetEnvironmentVariable("APIURL");
-            var apiUrl = Environment.GetEnvironmentVariable("APIURL");
+            var apiUrl = _config.GetValue<string>("API_URL", "Not configured");
             var sev = string.IsNullOrEmpty(apiUrl)
                 ? "alert-danger"
                 : "alert-success";
 
+
             ViewData["apiurl"] = apiUrl ?? "Not Configured!";
-            ViewData["xxx"] = apiUrl ?? "hej";
-			ViewData["foo"] = "bar";
             ViewData["sev"] = sev;
+
+            ViewData["Env:LOG_ELASTICFORMAT"] = _config.GetValue<bool>("LOG_ELASTICFORMAT", false);
+            ViewData["Env:TRY_SOMECONFIGKEY"] = _config.GetValue<string>("TRY_SOMECONFIGKEY", "Not found");
+            ViewData["Env:TRY_OTHERCONFIGKEY"] = _config.GetValue<string>("TRY_OTHERCONFIGKEY", "Not found");
+            ViewData["Env:TRY_THIRDKEY"] = _config.GetValue<string>("TRY_THIRDKEY", "Not found");
 
             var apiResponse = GetValuesFromApi(apiUrl);
             ViewData["response_sev"] = apiResponse.sev;
