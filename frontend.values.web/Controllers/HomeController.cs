@@ -26,6 +26,7 @@ namespace frontend.values.web.Controllers
                 : "alert-success";
 
             ViewData["apiurl"] = apiUrl ?? "Not Configured!";
+            ViewData["xxx"] = apiUrl ?? "hej";
             ViewData["sev"] = sev;
 
             var apiResponse = GetValuesFromApi(apiUrl);
@@ -87,3 +88,4 @@ namespace frontend.values.web.Controllers
         #endregion
     }
 }
+
