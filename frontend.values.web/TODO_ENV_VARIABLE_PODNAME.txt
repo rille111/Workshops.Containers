@@ -1,1 +1,0 @@
-Output $_SERVER['POD_NAME']   for requests to see what pod gets chosen when load balancing.
