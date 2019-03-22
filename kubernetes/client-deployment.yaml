@@ -21,3 +21,6 @@ spec:
               cpu: "500m"          
           ports:
             - containerPort: 3000
+          env:
+          - name: LOG_ELASTICFORMAT
+            value: 'true'
