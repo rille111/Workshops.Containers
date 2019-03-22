@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Serilog;
+using Serilog.Events;
 using Serilog.Exceptions;
 using Serilog.Formatting.Elasticsearch;
 
@@ -29,15 +30,17 @@ namespace frontend.values.web
                 {
                     var shouldFormatElastic = ctx.Configuration.GetValue<bool>("LOG_ELASTICFORMAT", false);
                     config
-                        .MinimumLevel.Information()
-                        .Enrich.FromLogContext() // TODO: See what difference this makes!
-                        .Enrich.WithExceptionDetails()
-                        ;
+                        .ReadFrom.Configuration(ctx.Configuration) // Read from appsettings and env, cmdline
+                        .Enrich.FromLogContext()
+                        .Enrich.WithExceptionDetails();
+
+                    var logFormatter = new ExceptionAsObjectJsonFormatter(renderMessage: true);
+                    var logMessageTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
 
                     if (shouldFormatElastic)
-                        config.WriteTo.Console(new ExceptionAsObjectJsonFormatter(renderMessage: true));
+                        config.WriteTo.Console(logFormatter, standardErrorFromLevel: LogEventLevel.Error);
                     else
-                        config.WriteTo.Console();
+                        config.WriteTo.Console(standardErrorFromLevel: LogEventLevel.Error, outputTemplate: logMessageTemplate);
 
                 })
                 .UseStartup<Startup>();

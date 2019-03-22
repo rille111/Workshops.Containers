@@ -48,9 +48,9 @@ namespace frontend.values.web.Controllers
         public IActionResult WriteTrace(TraceModel trace)
         {
             if (trace.Level == LogLevel.Critical)
-                _logger.Log(trace.Level, new ApplicationException("Boom!"), trace.Message);
+                _logger.Log(trace.Level, new ApplicationException("Boom!"), "Text: {Message}", trace.Message);
             else
-                _logger.Log(trace.Level, trace.Message);
+                _logger.Log(trace.Level, "Text: {Text}", trace.Message);
 
             ViewData["trace_written_message"] = "Wrote to logger";
             
