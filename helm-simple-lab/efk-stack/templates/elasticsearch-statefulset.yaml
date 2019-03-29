@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.es.clusterName }}
+  namespace: {{ .Values.namespace }}
+spec:
+  serviceName: {{ .Values.es.hostName }}
+  replicas: {{ .Values.es.clusterCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.es.hostName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.es.hostName }}
+    spec:
+      containers:
+      - name: {{ .Values.es.hostName }}
+        image: {{ .Values.es.image }} 
+        resources:
+            limits:
+              cpu: {{ .Values.es.cpuLimit }}
+            requests:
+              cpu: {{ .Values.es.cpuRequest }}
+        ports:
+        - containerPort: 9200
+          name: rest
+          protocol: TCP
+        - containerPort: 9300
+          name: inter-node
+          protocol: TCP
+        volumeMounts:
+        - name: data
+          mountPath: /usr/share/elasticsearch/data
+        env:
+          - name: cluster.name
+            value: k8s-logs
+          - name: node.name
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: discovery.zen.ping.unicast.hosts
+            value: {{ .Values.es.clusterHosts }}
+          - name: discovery.zen.minimum_master_nodes
+            value: {{ .Values.es.masterNodeCount }} # Should be Replices / 2 + 1
+          - name: ES_JAVA_OPTS
+            value: {{ .Values.es.javaOptions }} 
+      initContainers:
+      - name: fix-permissions
+        image: busybox
+        command: ["sh", "-c", "chown -R 1000:1000 /usr/share/elasticsearch/data"]
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: data
+          mountPath: /usr/share/elasticsearch/data
+      - name: increase-vm-max-map
+        image: busybox
+        command: ["sysctl", "-w", "vm.max_map_count=262144"]
+        securityContext:
+          privileged: true
+      - name: increase-fd-ulimit
+        image: busybox
+        command: ["sh", "-c", "ulimit -n 65536"]
+        securityContext:
+          privileged: true
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+      labels:
+        app: {{ .Values.es.hostName }}
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: {{ .Values.es.volumeClaimStorageClass }} # 'standard' for Minikube, or 'default' or some other class depending on your cloud provider.
+      resources:
+        requests:
+          storage: {{ .Values.es.volumeClaimSize }} # See cloud provider for exact sizes
