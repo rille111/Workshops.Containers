@@ -47,6 +47,14 @@ This part describes installation for Kubernetes locally (Minikube) and on a Clou
     * Go through the above installation steps again
     * Or read and do this: https://github.com/kubernetes/minikube/issues/822
 
+* Getting weird kubectl errors?
+    * Upgrade kubectl (kubernetes CLI)
+    * Run `kubectl version` and if there's a version mismatch then do this:
+    * `choco upgrade choco upgrade kubernetes-cli`
+    * `Get-Command kubectl` you're probably using the docker desktop provided kubectl, this is because Env Path variable for Docker is above the Choco bin path.
+    * Open Env. variables in windows and move the path entry for choco bin the highest
+    * Back to your terminal, do a `refreshenv` and `Get-Command kubectl` to make sure correct .exe is found, and `kubectl version` to make sure the same versions are there.
+    
 More info:
 * You can connect to the VM and login with user: **docker**   password: **tcuser**
 * Shutdown the image that is running in Hyper-V: `sudo shutdown -r now -f`
