@@ -4,29 +4,29 @@ We're going to set up a TLS certificate provided by LetsEncrypt, issued to a cho
 A brief walkthrough of the steps required follows below, from registering a domain, editing the DNS settings and making Cert-manager do the LetsEncrypt magic automatically, using ACME.
 
 ## Decide upon domain and subdomain
-* I choose fodmaps.nu as top tomain because I already own it, and it's registered in the domain registrar 'Binero' a swedish one for buying domains
-* I choose kube, resulting in kube.fodmaps.nu as subdomain
+* I choose kumobits.com as top tomain because I already own it, and it's registered in the domain registrar 'Binero' a swedish one for buying domains
+* I choose kube, resulting in kube.kumobits.com as subdomain
 
 ## Create a DNZ Zone in your Cloud Provider
 This will depend on the k8s/cloud provider. We need this setup first so that we have nameservers that can respond to requests.
 So, a domain name is required for setting up Ingress endpoints to services running in the cluster. The specified domain name can be a top-level domain (TLD) or a subdomain. In either case you have to manually set up the NS records for the specified TLD or subdomain so as to delegate DNS resolution queries to an the cloud provider DNS zone created.
 
 ### For Google Cloud DNS
-* Create a DNS zone called 'kube.fodmaps.nu' (change to your fqdn)
+* Create a DNS zone called 'kube.kumobits.com' (change to your fqdn)
 * Add a * wildcard A record, point to the IP of the Ingress, it can be found be executing `kubectl get services`, use at the External IP of the Ingress controller, TTL an hour
     * Like so:  * A 10.10.10.10
-    * `*.aftenbil.kumobits.com.	A	300	10.10.10.10`
+    * `*.kube.kumobits.com.	A	300	10.10.10.10`
 * Add a @ wildcard A record, point to the same adress, TTL an hour
     * Like so:  @ A 10.10.10.10
-    * `@.aftenbil.kumobits.com.	A	300	10.10.10.10`
+    * `@.kube.kumobits.com.	A	300	10.10.10.10`
 * Add a regular A record, point to the same adress, TTL an hour
     * Like so:  @ A 10.10.10.10
-    * `aftenbil.kumobits.com.	A	300	10.10.10.10`
+    * `kube.kumobits.com.	A	300	10.10.10.10`
    
 * Note the name servers that is listed in this DNS Zone, there should be a list of 4-5, example: `ns-cloud-e1.googledomains.com.`
 
 ### For Azure DNZ Zone
-* Create a DNS zone called 'kube.fodmaps.nu' (change to your fqdn)
+* Create a DNS zone called 'kube.kumobits.com' (change to your fqdn)
 * Add a * wildcard A record, point to the IP of the Ingress, it can be found be executing `kubectl get services`, use at the External IP of the Ingress controller, TTL an hour
     * Like so:  * A 10.10.10.10
 * Add a @ wildcard A record, point to the same adress, TTL an hour
@@ -34,7 +34,7 @@ So, a domain name is required for setting up Ingress endpoints to services runni
 * Note the name servers that is listed in this DNS Zone, there should be a list of 4-5, example: `ns1-08.azure-dns.com.`
 
 #### Problems getting a production cert?
-I had problems getting a production cert for a while so I also created a DNS zone 'fodmaps.nu', but I don't think it's necessary, but what I did was this:
+I had problems getting a production cert for a while so I also created a DNS zone 'kumobits.com', but I don't think it's necessary, but what I did was this:
 * Add a * wildcard A record, point to the IP of the Ingress, TTL an hour
     * Like so:  * A 10.10.10.10
 * Add a @ wildcard A record, point to the same adress, TTL an hour
@@ -42,15 +42,15 @@ I had problems getting a production cert for a while so I also created a DNS zon
 
 ## Register and set up a domain
 
-Use your preferred domain registrar to register a domain, i'm using `fodmaps.nu`
+Use your preferred domain registrar to register a domain, i'm using `kumobits.com`
 
 #### Configure the topdomain and add a subdomain in your domain registrar
 
-To add a subdomain in your registrar, use the one for the previous step, so I use `kube` (you may have something else). The FQDN becomes `kube.fodmaps.nu`.
+To add a subdomain in your registrar, use the one for the previous step, so I use `kube` (you may have something else). The FQDN becomes `kube.kumobits.com`.
 
 Follow these steps:
 
-* Edit DNS settings for your top domain (`fodmaps.nu` for me) and add all NS records pointing to the DNS Zone in your cloud provider, for each NS Server noted from above:
+* Edit DNS settings for your top domain (`kumobits.com` for me) and add all NS records pointing to the DNS Zone in your cloud provider, for each NS Server noted from above:
     * Subdomain: `kube` (replace with your choice)
     * Type: `NS`
     * Data: `XXX-XX.azure-dns.com` (remember the note from above)
@@ -80,12 +80,12 @@ kube 1800 IN NS ns-cloud-e4.azure-dns.com.com.
 #### Verify domain
 
 After a while, run these commands:
-* `nslookup -q=NS kube.fodmaps.nu` (Replace with your FQDN)
+* `nslookup -q=NS kube.kumobits.com` (Replace with your FQDN)
     * The response should list all the name servers from your cloud provided DNS Zone, only then can you continue!
-* `nslookup -q=NS fodmaps.nu` (Replace with your registered domain)
+* `nslookup -q=NS kumobits.com` (Replace with your registered domain)
     * The response should list all the name servers from your domain registrar, only then can you continue!
-* `ping kube.fodmaps.nu` the IP should be the External IP of your k8s ingress controller
-* Go to http://kube.fodmaps.nu (replace with your registered subdomain) and see that you can access the website, only then can you continue!
+* `ping kube.kumobits.com` the IP should be the External IP of your k8s ingress controller
+* Go to http://kube.kumobits.com (replace with your registered subdomain) and see that you can access the website, only then can you continue!
 
 ## Install and set up Cert-manager for kubernetes
 
@@ -109,20 +109,20 @@ After a while, run these commands:
     * edit yaml first to use your settings, then `kubectl apply -f staging-issuer.yaml` 
     * edit first, then `kubectl apply -f staging-ingress-service.yaml` (overwrites your previously deployed ingress)
     * Run `kubectl describe certificates` and it should say that certificate is valid, or that it's up to date, otherwise wait, or go to Troubleshooting below
-    * Go to https://kube.fodmaps.nu (replace with your host) and verify that it works, WITH HTTPS warnings (that's ok)
+    * Go to https://kube.kumobits.com (replace with your host) and verify that it works, WITH HTTPS warnings (that's ok)
 * Now, use the production variant (validation may take time, with some retries!)
     * edit yaml first to use your settings, then `kubectl apply -f production-issuer.yaml` 
     * then `kubectl delete ingress ingress-service` 
     * edit first, then `kubectl apply -f production-ingress-service.yaml` (overwrites your previously deployed ingress)
-    * Go to https://kube.fodmaps.nu (replace with your host) and verify that it works without any HTTPS warning
+    * Go to https://kube.kumobits.com (replace with your host) and verify that it works without any HTTPS warning
 * Profit!
 
 ## Troubleshooting
 
 * Get the IP to your cluster, your ingress-controller by running: `kubectl get services` and look for External IP
-    * Run `ping kube.fodmaps.nu` (replace) to see that you get response with the IP that is exactly the IP shown up in your ingress-controller
+    * Run `ping kube.kumobits.com` (replace) to see that you get response with the IP that is exactly the IP shown up in your ingress-controller
 * Run `ipconfig /flushdns` 
-    * and then  `nslookup -q=NS kube.fodmaps.nu` to see that correct nameservers show up (your cloud provider)
+    * and then  `nslookup -q=NS kube.kumobits.com` to see that correct nameservers show up (your cloud provider)
 * Run `kubectl describe certificates` note the order id, and if the order is in state 'Issuing' or failed, see:
     * Run `kubectl describe order kube-fodmaps-nu-tls-staging-2780172425` use the order id, note the challenge id (https://docs.cert-manager.io/en/latest/reference/orders.html
     * Run `kubectl describe challenge kube-fodmaps-nu-tls-staging-2780172425-0`
@@ -144,11 +144,11 @@ Errors I've got and how I fixed them:
   * Test this by shooting a DIG CA here, paste your host, choose Type: CAA, click Dig and you should see your cloud provider DNS there
   * Also see: https://caddy.community/t/failed-to-get-certificate-error-presenting-token-unexpected-response-code-servfail-with-cloudflare/3305
   * To fix this i did this:
-    * deleted the DNZ Zone of 'fodmaps.nu' that I first had, and created a 'kube.fodmaps.nu' DNZ zone instead (see above)
-    * also edited fodmaps.nu top domain in my other Registrar and swapped out the default NS to the ones in the Azure DNZ Zone, this hopefully is not needed though!
+    * deleted the DNZ Zone of 'kumobits.com' that I first had, and created a 'kube.kumobits.com' DNZ zone instead (see above)
+    * also edited kumobits.com top domain in my other Registrar and swapped out the default NS to the ones in the Azure DNZ Zone, this hopefully is not needed though!
     * https://sslmate.com/caa/ see here how to edit
 
-* On a challenge: "Accepting challenge authorization failed: acme: authorization for identifier kube.fodmaps.nu"
+* On a challenge: "Accepting challenge authorization failed: acme: authorization for identifier kube.kumobits.com"
     * describe certificates says that it will try again in an hour. Theory is that the ingress-controller temporarily was down (or creating) when a challenge came from letsencrypt
     * It seems by going to letsencrypt challenge url (kubectl describe challenge), the error was because of CAA blabla, same as above
     * I may have fixed this by a combination of:
@@ -156,7 +156,7 @@ Errors I've got and how I fixed them:
         * and in the same registrar, adding a CAA record like this: (not sure how long it takes)
             * `@` `CAA` with data `0 issuewild "letsencrypt.org"`
         * Verify with either
-            * `nslookup -q=CAA kubefodmaps.nu` and `nslookup -q=CAA fodmaps.nu` 
-            * Or https://www.digwebinterface.com/ for kube.fodmaps.nu and fodmaps.nu both should get you some response.
+            * `nslookup -q=CAA kubekumobits.com` and `nslookup -q=CAA kumobits.com` 
+            * Or https://www.digwebinterface.com/ for kube.kumobits.com and kumobits.com both should get you some response.
         * See more here: https://www.digitalocean.com/docs/networking/dns/how-to/caa/
         * And here:https://community.letsencrypt.org/t/caa-setup-for-lets-encrypt/9893
