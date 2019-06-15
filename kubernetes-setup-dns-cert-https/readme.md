@@ -4,7 +4,7 @@ We're going to set up a TLS certificate provided by LetsEncrypt, issued to a cho
 A brief walkthrough of the steps required follows below, from registering a domain, editing the DNS settings and making Cert-manager do the LetsEncrypt magic automatically, using ACME.
 
 ## Decide upon domain and subdomain
-* I choose kumobits.com as top tomain because I already own it, and it's registered in the domain registrar 'Binero' a swedish one for buying domains
+* I choose kumobits.com as top tomain because I already own it, and it's registered in the domain registrar 'Gandi.net'.
 * I choose kube, resulting in kube.kumobits.com as subdomain
 
 ## Create a DNZ Zone in your Cloud Provider
