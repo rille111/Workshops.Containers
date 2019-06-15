@@ -118,6 +118,10 @@ After a while, run these commands:
 * Profit!
 
 ## Troubleshooting
+* Test SSL Cert:
+  * `choco install openssl.light`
+  * `refreshenv`
+  * `openssl s_client -showcerts -servername my.domain.com -connect my.domain.com:443`
 
 * Get the IP to your cluster, your ingress-controller by running: `kubectl get services` and look for External IP
     * Run `ping kube.kumobits.com` (replace) to see that you get response with the IP that is exactly the IP shown up in your ingress-controller
