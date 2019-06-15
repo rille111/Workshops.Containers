@@ -11,7 +11,22 @@ A brief walkthrough of the steps required follows below, from registering a doma
 This will depend on the k8s/cloud provider. We need this setup first so that we have nameservers that can respond to requests.
 So, a domain name is required for setting up Ingress endpoints to services running in the cluster. The specified domain name can be a top-level domain (TLD) or a subdomain. In either case you have to manually set up the NS records for the specified TLD or subdomain so as to delegate DNS resolution queries to an the cloud provider DNS zone created.
 
-* I created a DNS zone called 'kube.fodmaps.nu' (
+### For Google Cloud DNS
+* Create a DNS zone called 'kube.fodmaps.nu' (change to your fqdn)
+* Add a * wildcard A record, point to the IP of the Ingress, it can be found be executing `kubectl get services`, use at the External IP of the Ingress controller, TTL an hour
+    * Like so:  * A 10.10.10.10
+    * `*.aftenbil.kumobits.com.	A	300	10.10.10.10`
+* Add a @ wildcard A record, point to the same adress, TTL an hour
+    * Like so:  @ A 10.10.10.10
+    * `@.aftenbil.kumobits.com.	A	300	10.10.10.10`
+* Add a regular A record, point to the same adress, TTL an hour
+    * Like so:  @ A 10.10.10.10
+    * `aftenbil.kumobits.com.	A	300	10.10.10.10`
+   
+* Note the name servers that is listed in this DNS Zone, there should be a list of 4-5, example: `ns-cloud-e1.googledomains.com.`
+
+### For Azure DNZ Zone
+* Create a DNS zone called 'kube.fodmaps.nu' (change to your fqdn)
 * Add a * wildcard A record, point to the IP of the Ingress, it can be found be executing `kubectl get services`, use at the External IP of the Ingress controller, TTL an hour
     * Like so:  * A 10.10.10.10
 * Add a @ wildcard A record, point to the same adress, TTL an hour
@@ -26,29 +41,41 @@ I had problems getting a production cert for a while so I also created a DNS zon
     * Like so:  @ A 10.10.10.10
 
 ## Register and set up a domain
+
 Use your preferred domain registrar to register a domain, i'm using `fodmaps.nu`
 
-#### Register and set up a subdomain
+#### Configure the topdomain and add a subdomain in your domain registrar
 
 To add a subdomain in your registrar, use the one for the previous step, so I use `kube` (you may have something else). The FQDN becomes `kube.fodmaps.nu`.
 
 Follow these steps:
 
-* Edit DNS settings for your domain (`fodmaps.nu` for me) and add an NS record pointing the DNS Zone in your cloud provider
+* Edit DNS settings for your top domain (`fodmaps.nu` for me) and add all NS records pointing to the DNS Zone in your cloud provider, for each NS Server noted from above:
     * Subdomain: `kube` (replace with your choice)
     * Type: `NS`
-    * Data: `ns1-08.azure-dns.com` (remember the note from above)
+    * Data: `XXX-XX.azure-dns.com` (remember the note from above)
     * TTL: `3600` (an hour)
-* And another
+    * Text record should become: `kube 1800 IN NS XXX-XX.azure-dns.com.`
+* And another, for letsencrypt
     * Subdomain: `kube` (replace with your choice)
     * Type: `CAA`
     * Data: `0 issue "letsencrypt.org"` (tells your registrar to allow letsencrypt to create certificates for this sub domain)
     * TTL: `3600` (an hour)
-* And another
+* And another, also for letsencrypt
     * Subdomain: `@`
     * Type: `CAA`
     * Data: `0 issue "letsencrypt.org"` (tells your registrar to allow letsencrypt to create certificates for this top domain)
     * TTL: `3600` (an hour)
+
+So the data text result for an example would become something like:
+```
+@ 3600 IN CAA 0 issue "letsencrypt.org"
+kube 3600 IN CAA 0 issue "letsencrypt.org"
+kube 1800 IN NS ns-cloud-e1.azure-dns.com.com.
+kube 1800 IN NS ns-cloud-e2.azure-dns.com.com.
+kube 1800 IN NS ns-cloud-e3.azure-dns.com.com.
+kube 1800 IN NS ns-cloud-e4.azure-dns.com.com.
+```
 
 #### Verify domain
 
