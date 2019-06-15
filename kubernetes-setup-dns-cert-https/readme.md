@@ -90,7 +90,7 @@ After a while, run these commands:
 ## Install and set up Cert-manager for kubernetes
 
 * We're gonna use https://github.com/jetstack/cert-manager
-* Go to https://docs.cert-manager.io/en/latest/getting-started/install.html#installing-with-helm and install it
+* Go to https://docs.cert-manager.io/en/latest/getting-started/install/kubernetes.html - scroll down to helm installation and install it by following the guide
 * Verify by running `kubectl get pods --namespace cert-manager`
 
 #### Get LetsEncrypt SSL Cert and make HTTPS work
@@ -98,7 +98,7 @@ After a while, run these commands:
 * First Test out certmgr with 
     * `kubectl apply -f .\test-resources.yaml`
     * `kubectl describe certificate -n cert-manager-test`
-    * Make sure stuff works, then cleanup with:
+    * Make sure stuff works by seeing the `message: Certificate issued successfully` then cleanup with:
     * `kubectl delete -f test-resources.yaml`
 * After that, you can either follow the staging instructions here: 
     * https://github.com/jetstack/cert-manager/blob/master/docs/tutorials/acme/quick-start/index.rst 
