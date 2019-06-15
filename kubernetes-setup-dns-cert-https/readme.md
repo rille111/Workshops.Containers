@@ -118,7 +118,7 @@ After a while, run these commands:
 * Profit!
 
 ## Troubleshooting
-* Test SSL Cert:
+* Test SSL Cert by either: https://www.ssllabs.com/ssltest/analyze.html or:
   * `choco install openssl.light`
   * `refreshenv`
   * `openssl s_client -showcerts -servername my.domain.com -connect my.domain.com:443`
