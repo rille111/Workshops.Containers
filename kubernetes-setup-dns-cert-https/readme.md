@@ -108,7 +108,7 @@ After a while, run these commands:
 * Or, if you're lazy or trust stuff works automagically, ignore that guide, edit and execute these yamls:
     * edit yaml first to use your settings, then `kubectl apply -f staging-issuer.yaml` 
     * edit first, then `kubectl apply -f staging-ingress-service.yaml` (overwrites your previously deployed ingress)
-    * Run `kubectl describe certificates` and it should say that certificate is valid, or that it's up to date, otherwise wait, or go to Troubleshooting below
+    * Run `kubectl describe certificates` and after a couple of minutes you should see "Certificate issued successfully", otherwise wait some more, or go to Troubleshooting below
     * Go to https://kube.kumobits.com (replace with your host) and verify that it works, WITH HTTPS warnings (that's ok)
 * Now, use the production variant (validation may take time, with some retries!)
     * edit yaml first to use your settings, then `kubectl apply -f production-issuer.yaml` 
