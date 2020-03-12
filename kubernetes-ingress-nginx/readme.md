@@ -10,7 +10,10 @@ In this example we're using *kubernetes* `ingress-nginx` solution, **NOT** the c
 * For example, I use Win10 so i needed to get the current account I was using, and the prereq command didnt work on Powershell.
   * So I executed `gcloud config get-value account` to get the account
   * And then `kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user rickard@kumobits.com`
-  
+  * Then the mandatory command: `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/mandatory.yaml`
+  * Then for GKE: `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/provider/cloud-generic.yaml
+`
+* Profit! 
 * Here for more docs: https://kubernetes.github.io/ingress-nginx/
 
 ## On minikube
