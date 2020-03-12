@@ -11,10 +11,10 @@ In this example we're using *kubernetes* `ingress-nginx` solution, **NOT** the c
   * So I executed `gcloud config get-value account` to get the account
   * And then `kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user rickard@kumobits.com`
   * Then the mandatory command: `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/mandatory.yaml`
-  * Then for GKE: `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/provider/cloud-generic.yaml
-`
-* Profit! 
+  * Then for GKE: `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/provider/cloud-generic.yaml`
+* Verify with `kubectl get pods --all-namespaces -l app.kubernetes.io/name=ingress-nginx --watch`
 * Here for more docs: https://kubernetes.github.io/ingress-nginx/
+* Profit!
 
 ## On minikube
 
