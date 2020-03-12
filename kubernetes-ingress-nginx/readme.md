@@ -4,9 +4,14 @@ The Ingress Controller is the the actual entrypoint to the services inside your 
 The Controller is like a service that set up and configure a load balancer, along with routing etc.
 In this example we're using *kubernetes* `ingress-nginx` solution, **NOT** the company NginX's own Ingress Controller. Big difference!
 
+* Get the latest kubectl! `choco install kube-cli` or `choco upgrade kubernetes-cli`
 * Execute the steps in: https://kubernetes.github.io/ingress-nginx/deploy/#prerequisite-generic-deployment-command
 * Follow the steps for YOUR cloud provider
-* Here for docs: https://kubernetes.github.io/ingress-nginx/
+* For example, I use Win10 so i needed to get the current account I was using, and the prereq command didnt work on Powershell.
+  * So I executed `gcloud config get-value account` to get the account
+  * And then `kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user rickard@kumobits.com`
+  
+* Here for more docs: https://kubernetes.github.io/ingress-nginx/
 
 ## On minikube
 
