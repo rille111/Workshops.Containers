@@ -1,0 +1,2 @@
+https://kubernetes.io/docs/reference/kubectl/cheatsheet/
+kubectl logs webapi-deployment-558f9df56c-mt7nh
