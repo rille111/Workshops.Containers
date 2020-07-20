@@ -95,8 +95,10 @@ After a while, run these commands:
 ## Install and set up Cert-manager for kubernetes
 
 * We're gonna use https://github.com/jetstack/cert-manager
+* First, update HELM to v3+
 * Go to https://cert-manager.io/docs/installation/kubernetes/#installing-with-helm - follow this guide
-* Verify by running `kubectl get pods --namespace XXX`
+* At time of writing, you do: `helm install cert-manager jetstack/cert-manager --namespace cert-mgr --version v0.15.1 --set installCRDs=true`
+* Verify by running `kubectl get pods --namespace cert-mgr`
 
 #### Get LetsEncrypt SSL Cert and make HTTPS work
 
@@ -170,3 +172,14 @@ Errors I've got and how I fixed them:
             * Or https://www.digwebinterface.com/ for kube.kumobits.com and kumobits.com both should get you some response.
         * See more here: https://www.digitalocean.com/docs/networking/dns/how-to/caa/
         * And here:https://community.letsencrypt.org/t/caa-setup-for-lets-encrypt/9893
+
+# Upgrading/Deleting Cert-Manager
+
+This can be a headache since all resources and CRD's **must be deleted** before namespaces can be deleted, otherwise it will get stuck.
+
+* First, delete Issuers, ClusterIssuers by kubectl delete on the yamls
+* Then use HELM to uninstall
+* Continue by calling kubectl delete on some files to make sure that CRD and ApiGroups gets deleted
+   * Example: kubectl delete -f https://github.com/jetstack/cert-manager/releases/download/v0.8.1/cert-manager.yaml
+* Delete namespaces and **make sure they're deleted!**
+* Now you can go to the install step and make a fresh install
