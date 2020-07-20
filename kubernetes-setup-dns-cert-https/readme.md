@@ -1,17 +1,20 @@
 # Get a domain and Setup HTTPS with a certificate (LetsEncrypt)
 
 We're going to set up a TLS certificate provided by LetsEncrypt, issued to a chose sub domain.
-A brief walkthrough of the steps required follows below, from registering a domain, editing the DNS settings and making Cert-manager do the LetsEncrypt magic automatically, using ACME.
+A brief walkthrough of the steps required follows below, from registering a domain, editing the DNS settings and making Cert-manager do the LetsEncrypt magic automatically, using ACME (a standard for requesting & issuing).
 
 ## Decide upon domain and subdomain
-* I choose kumobits.com as top tomain because I already own it, and it's registered in the domain registrar 'Gandi.net'.
-* I choose kube, resulting in kube.kumobits.com as subdomain
+
+* Using 'kumobits.com' as top tomain because I already own it, and it's registered in the domain registrar 'Gandi.net'.
+* Using 'kube', resulting in kube.kumobits.com as subdomain
 
 ## Create a DNZ Zone in your Cloud Provider
+
 This will depend on the k8s/cloud provider. We need this setup first so that we have nameservers that can respond to requests.
 So, a domain name is required for setting up Ingress endpoints to services running in the cluster. The specified domain name can be a top-level domain (TLD) or a subdomain. In either case you have to manually set up the NS records for the specified TLD or subdomain so as to delegate DNS resolution queries to an the cloud provider DNS zone created.
 
 ### For Google Cloud DNS
+
 * Create a DNS zone called 'kube.kumobits.com' (change to your fqdn)
 * Add a * wildcard A record, point to the IP of the Ingress, it can be found be executing `kubectl get services`, use at the External IP of the Ingress controller, TTL an hour
     * Like so:  * A 10.10.10.10
@@ -26,6 +29,7 @@ So, a domain name is required for setting up Ingress endpoints to services runni
 * Note the name servers that is listed in this DNS Zone, there should be a list of 4-5, example: `ns-cloud-e1.googledomains.com.`
 
 ### For Azure DNZ Zone
+
 * Create a DNS zone called 'kube.kumobits.com' (change to your fqdn)
 * Add a * wildcard A record, point to the IP of the Ingress, it can be found be executing `kubectl get services`, use at the External IP of the Ingress controller, TTL an hour
     * Like so:  * A 10.10.10.10
@@ -34,6 +38,7 @@ So, a domain name is required for setting up Ingress endpoints to services runni
 * Note the name servers that is listed in this DNS Zone, there should be a list of 4-5, example: `ns1-08.azure-dns.com.`
 
 #### Problems getting a production cert?
+
 I had problems getting a production cert for a while so I also created a DNS zone 'kumobits.com', but I don't think it's necessary, but what I did was this:
 * Add a * wildcard A record, point to the IP of the Ingress, TTL an hour
     * Like so:  * A 10.10.10.10
@@ -90,34 +95,35 @@ After a while, run these commands:
 ## Install and set up Cert-manager for kubernetes
 
 * We're gonna use https://github.com/jetstack/cert-manager
-* Go to https://docs.cert-manager.io/en/latest/getting-started/install/kubernetes.html - scroll down to helm installation and install it by following the guide
-* Verify by running `kubectl get pods --namespace cert-manager`
+* Go to https://cert-manager.io/docs/installation/kubernetes/#installing-with-helm - follow this guide
+* Verify by running `kubectl get pods --namespace XXX`
 
 #### Get LetsEncrypt SSL Cert and make HTTPS work
 
 * First Test out certmgr with 
     * `kubectl apply -f .\test-resources.yaml`
-    * `kubectl describe certificate -n cert-manager-test`
+    * `kubectl describe certificates -n XXX`
     * Make sure stuff works by seeing the `message: Certificate issued successfully` then cleanup with:
     * `kubectl delete -f test-resources.yaml`
 * After that, you can either follow the staging instructions here: 
-    * https://github.com/jetstack/cert-manager/blob/master/docs/tutorials/acme/quick-start/index.rst 
+    * https://cert-manager.io/docs/tutorials/acme/ingress/
     * and follow the instructions there to get a LetsEncrypt certificate, it's better than me writing the same guide here. 
     * Again, first use the staging stuff first (use prepared yamls here)!
-    * We're going to use ingress-shim (use 'annotations' in `staging/production-ingress-service.yaml` instead of creating our own with `certificate.yaml` even though the yaml is there as an option.)
+    * We're going to use ingress-shim (use 'annotations' in `staging/production -ingress-service.yaml` instead of creating our own with `certificate.yaml` even though the yaml is there as an option.)
 * Or, if you're lazy or trust stuff works automagically, ignore that guide, edit and execute these yamls:
     * edit yaml first to use your settings, then `kubectl apply -f staging-issuer.yaml` 
-    * edit first, then `kubectl apply -f staging-ingress-service.yaml` (overwrites your previously deployed ingress)
+    * edit first, then `kubectl apply -f staging-ingresses.yaml` (overwrites your previously deployed ingress)
     * Run `kubectl describe certificates` and after a couple of minutes you should see "Certificate issued successfully", otherwise wait some more, or go to Troubleshooting below
     * Go to https://kube.kumobits.com (replace with your host) and verify that it works, WITH HTTPS warnings (that's ok)
 * Now, use the production variant (validation may take time, with some retries!)
     * edit yaml first to use your settings, then `kubectl apply -f production-issuer.yaml` 
     * then `kubectl delete ingress ingress-service` 
-    * edit first, then `kubectl apply -f production-ingress-service.yaml` (overwrites your previously deployed ingress)
+    * edit first, then `kubectl apply -f production-ingresses.yaml` (overwrites your previously deployed ingress)
     * Go to https://kube.kumobits.com (replace with your host) and verify that it works without any HTTPS warning
 * Profit!
 
 ## Troubleshooting
+
 * Test SSL Cert by either: https://www.ssllabs.com/ssltest/analyze.html or:
   * `choco install openssl.light`
   * `refreshenv`
