@@ -1,0 +1,1 @@
+docker build -t labs/nginx-hello:latest .
