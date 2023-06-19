@@ -61,7 +61,9 @@ Follow these steps:
     * Data: `XXX-XX.azure-dns.com` (remember the note from above)
     * TTL: `3600` (an hour)
     * Text record should become: `kube 1800 IN NS XXX-XX.azure-dns.com.`
-* And another, for letsencrypt
+
+Then,
+* Another, for letsencrypt
     * Subdomain: `kube` (replace with your choice)
     * Type: `CAA`
     * Data: `0 issue "letsencrypt.org"` (tells your registrar to allow letsencrypt to create certificates for this sub domain)
